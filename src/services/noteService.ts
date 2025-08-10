@@ -25,8 +25,9 @@ export const fetchNotes = async ({query, page}: fetchNoteProps): Promise<GetTask
         {
             ...config,
             params: {
-                query,
+                search: query,
                 page,
+                perPage: 10,
             }
         }
     );
