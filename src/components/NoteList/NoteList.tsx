@@ -5,30 +5,30 @@ import css from './NoteList.module.css'
 
 
 interface NoteListProps {
-    tasks: Note[] | undefined;
+    notes: Note[] | undefined;
 }
 
-export default function NoteList({ tasks }: NoteListProps) {
+export default function NoteList({ notes }: NoteListProps) {
 
     const queryClient = useQueryClient();
     
     const deleteTaskMutation = useMutation({
-        mutationFn: (id: number) => deleteNote(id),
+        mutationFn: (id: string) => deleteNote(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tasks'] })
+            queryClient.invalidateQueries({ queryKey: ['notes'] })
         },
     });
 
 
     return (
         <ul className={css.list}>
-            {tasks?.map((task) => (
-                <li className={css.listItem} key={task.id}>
-                    <h2 className={css.title}>{task.title}</h2>
-                    <p className={css.content}>{task.content}</p>
+            {notes?.map((note) => (
+                <li className={css.listItem} key={note.id}>
+                    <h2 className={css.title}>{note.title}</h2>
+                    <p className={css.content}>{note.content}</p>
     <div className={css.footer}>
-                        <span className={css.tag}>{task.tag}</span>
-      <button className={css.button} onClick={() => {deleteTaskMutation.mutate(task.id)}} >Delete</button>
+                        <span className={css.tag}>{note.tag}</span>
+      <button className={css.button} onClick={() => {deleteTaskMutation.mutate(note.id)}} >Delete</button>
     </div>
                 </li>
             ))}

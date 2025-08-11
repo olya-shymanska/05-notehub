@@ -1,16 +1,16 @@
 import SearchBox from "../SearchBox/SearchBox"
-import ReactPaginate from 'react-paginate';
+import Pagination from "../Pagination/Pagination";
 import NoteList from "../NoteList/NoteList"
 import { fetchNotes } from "../../services/noteService";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useDebouncedCallback } from 'use-debounce';
 import { useState } from "react";
 import css from './App.module.css'
-import styles from '../Pagination/Pagination.module.css'
 import Modal from "../Modal/Modal";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import ErrorRequest from "../ErrorRequest/ErrorRequest";
+import NoteForm from "../NoteForm/NoteForm";
 
 function App() {
 
@@ -22,14 +22,15 @@ function App() {
   const closeModal = () => setIsModalOpen(false);
 
   const {data, isSuccess, isLoading, isFetching, isError} = useQuery({
-    queryKey: ['tasks', inputValue, page],
+    queryKey: ['notes', inputValue, page],
     queryFn: () => fetchNotes({ query: inputValue, page: page }),
     placeholderData: keepPreviousData,
   });
 
   const updateSearchQuery = useDebouncedCallback(
     (searchTopic: string) => {
-      {setinputValue(searchTopic)}
+      setinputValue(searchTopic);
+      setPage(1);
     },
     300
   );
@@ -40,30 +41,30 @@ function App() {
     <div className={css.app}>
       <header className={css.toolbar}>
         <SearchBox value={inputValue} onSearch={updateSearchQuery} />
-     {isSuccess && totalPages > 0 &&  <ReactPaginate
-          pageCount={totalPages}
-                pageRangeDisplayed={5}
-                marginPagesDisplayed={1}
-                onPageChange={({ selected }) => setPage(selected + 1)}
-                forcePage={page - 1}
-                containerClassName={styles.pagination}
-                activeClassName={styles.active}
-                nextLabel="→"
-                previousLabel="←"
-            />}
+     {isSuccess && totalPages > 0 &&  (
+          <Pagination
+            pageCount={totalPages}
+            currentPage={page}
+            onPageChange={setPage}
+          />
+        )}
         <button className={css.button} onClick={openModal}>Create +</button>
       </header>
-      
+
       {isLoading || isFetching ? (
       <Loader />
     ) : isError ? (
       <ErrorMessage />
     ) : data && data.notes.length > 0 ? (
-      <NoteList tasks={data.notes} />
+      <NoteList notes={data.notes} />
     ) : (
       <ErrorRequest />
     )}
-      {isModalOpen && <Modal onClose={closeModal} />}
+      {isModalOpen && (
+        <Modal onClose={closeModal} >
+          <NoteForm onCloseBtn={closeModal}/>
+        </Modal>
+      )}
      
       </div>
   )

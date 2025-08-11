@@ -43,7 +43,7 @@ export default function NoteForm({onCloseBtn}: NoteFormProps) {
     const newTaskMutation = useMutation({
         mutationFn: createNote,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tasks'] });
+            queryClient.invalidateQueries({ queryKey: ['notes'] });
         },
     });
 
@@ -51,16 +51,15 @@ export default function NoteForm({onCloseBtn}: NoteFormProps) {
         values: FormValues,
         actions: FormikHelpers<FormValues>
     ) => {
-
-        if (values.tag === '') {
-            return;
-        }
-
-        newTaskMutation.mutate(values);
-        onCloseBtn();
-        actions.resetForm();
-    }
-
+        if (values.tag === '') return;
+      
+        newTaskMutation.mutate(values, {
+          onSuccess: () => {
+            actions.resetForm();
+            onCloseBtn();
+          },
+        });
+      };
 
     const fieldId = useId();
     return (

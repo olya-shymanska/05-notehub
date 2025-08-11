@@ -39,7 +39,8 @@ export const createNote = async (newNote: NewNote): Promise<Note> => {
     return response.data;
 };
 
-export const deleteNote = async (taskId: number) => {
-    await axios.delete(`https://notehub-public.goit.study/api/notes/${taskId}`, config);
+export const deleteNote = async (taskId: string): Promise<Note> => {
+    const response = await axios.delete<Note>(`https://notehub-public.goit.study/api/notes/${taskId}`, config);
+    return response.data;
 };
  
