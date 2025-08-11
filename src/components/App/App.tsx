@@ -62,7 +62,7 @@ function App() {
     )}
       {isModalOpen && (
         <Modal onClose={closeModal} >
-          <NoteForm onCloseBtn={closeModal}/>
+          <NoteForm onClose={closeModal}/>
         </Modal>
       )}
      

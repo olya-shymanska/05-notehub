@@ -16,11 +16,11 @@ tag: NoteTag,
 const initialValues: FormValues = {
 title: "",
 content: "",
-tag: "",
+tag: "Todo",
 };
 
 interface NoteFormProps {
-    onCloseBtn: () => void;
+    onClose: () => void;
 }
 
 const taskSchema = Yup.object().shape({
@@ -36,7 +36,7 @@ const taskSchema = Yup.object().shape({
   });
   
 
-export default function NoteForm({onCloseBtn}: NoteFormProps) {
+export default function NoteForm({onClose}: NoteFormProps) {
 
     const queryClient = useQueryClient(); 
 
@@ -51,12 +51,11 @@ export default function NoteForm({onCloseBtn}: NoteFormProps) {
         values: FormValues,
         actions: FormikHelpers<FormValues>
     ) => {
-        if (values.tag === '') return;
       
         newTaskMutation.mutate(values, {
           onSuccess: () => {
             actions.resetForm();
-            onCloseBtn();
+            onClose();
           },
         });
       };
@@ -91,7 +90,7 @@ export default function NoteForm({onCloseBtn}: NoteFormProps) {
             </div>
 
             <div className={css.actions}>
-                <button type="button" className={css.cancelButton} onClick={onCloseBtn}>Cancel</button>
+                <button type="button" className={css.cancelButton} onClick={onClose}>Cancel</button>
                 <button type="submit" disabled={false} className={css.submitButton}>Create Note</button>
             </div>
                 </Form>
